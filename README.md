@@ -25,8 +25,9 @@
 
 ## 🏆 开发者荣誉榜（自动更新）
 
-> 排行榜会在 **Issue 被关闭** 或 **PR 被合并/关闭** 时由 GitHub Actions 自动刷新。
-> 计分规则：只统计 **已关闭（closed）且带 `Points: XX` 标签** 的 Issue；优先按 **Assignees** 记分（多人会均分）。
+> 排行榜以 `data/leaderboard.json` 为准，并由 GitHub Actions 自动刷新。
+> 计分触发：维护者在 Issue 下评论 `/award @user`，或 **PR 合并**（PR 描述需包含 `Fixes #12` 关联 Issue）。
+> 计分规则：分值从关联 Issue 的 `Points: XX` 标签读取；代码类任务积分发放给 **PR 作者**。
 
 <!-- LEADERBOARD:START -->
 ## 🏆 开发者荣誉榜（自动更新）
