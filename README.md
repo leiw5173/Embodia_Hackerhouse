@@ -52,7 +52,13 @@ Labels：`Quest: Coding` + `Points: 50` + `Status: Open`
 > 计分规则：只统计 **已关闭（closed）且带 `Points: XX` 标签** 的 Issue；优先按 **Assignees** 记分（多人会均分）。
 
 <!-- LEADERBOARD:START -->
-（等待首次自动刷新）
+## 🏆 开发者荣誉榜（自动更新）
+
+| 排名 | 开发者 | 累计积分 (XP) | 获得勋章 |
+| :--- | :--- | ---: | :--- |
+| 🥇 | @leiw5173 | 50 |  |
+
+> 最近更新：2026-01-15 07:03 UTC（由 GitHub Actions 自动生成）
 <!-- LEADERBOARD:END -->
 
 ---
