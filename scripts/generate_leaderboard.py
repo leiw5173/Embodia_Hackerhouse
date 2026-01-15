@@ -173,9 +173,13 @@ def main() -> int:
             data = json.load(f)
         # 支持两种结构：
         # 1) {"userA": 50, "userB": 10}
-        # 2) {"users": {"userA": {"points": 50}}}
+        # 2) {"users": {"userA": {"points": 50}}, "awards": {...}}
         if isinstance(data, dict) and "users" in data and isinstance(data["users"], dict):
-            totals = {k: int(v.get("points", 0)) for k, v in data["users"].items() if isinstance(v, dict)}
+            totals = {
+                k: int(v.get("points", 0))
+                for k, v in data["users"].items()
+                if isinstance(v, dict)
+            }
         elif isinstance(data, dict):
             totals = {k: int(v) for k, v in data.items()}
         else:

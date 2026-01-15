@@ -1,6 +1,9 @@
 blank_issues_enabled: true
 contact_links:
-  - name: "玩法说明（README）"
-    url: "https://github.com/<OWNER>/<REPO>#-参与方式user-journey"
-    about: "先看 README：领取任务、提交、核销与排行榜规则"
+  - name: "参与方式（docs/participation.md）"
+    url: "https://github.com/<OWNER>/<REPO>/blob/main/docs/participation.md"
+    about: "如何接任务、提交、计分（/award）"
+  - name: "ChatOps 计分（docs/chatops.md）"
+    url: "https://github.com/<OWNER>/<REPO>/blob/main/docs/chatops.md"
+    about: "维护者如何用 /award 发放积分、排行榜如何刷新"
 

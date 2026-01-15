@@ -81,7 +81,21 @@ def load_db(path: Path) -> Dict[str, int]:
 
 def save_db(path: Path, totals: Dict[str, int]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(totals, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    # 兼容新结构：写成 {"users": {"u": {"points": N}}, "awards": {...}}
+    raw = {}
+    if path.exists():
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8") or "{}")
+        except json.JSONDecodeError:
+            raw = {}
+    awards = raw.get("awards") if isinstance(raw, dict) else None
+    if not isinstance(awards, dict):
+        awards = {}
+    out = {
+        "users": {u: {"points": int(p)} for u, p in totals.items()},
+        "awards": awards,
+    }
+    path.write_text(json.dumps(out, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def get_issue_points(session: requests.Session, repo: str, issue_number: int) -> int:
