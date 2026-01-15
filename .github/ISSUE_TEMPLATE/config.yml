@@ -1,0 +1,6 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "玩法说明（README）"
+    url: "https://github.com/<OWNER>/<REPO>#-参与方式user-journey"
+    about: "先看 README：领取任务、提交、核销与排行榜规则"
+

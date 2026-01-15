@@ -1,0 +1,68 @@
+name: "Quest（任务）"
+description: "创建一个可领取的任务（IssueOps）"
+title: "[Quest] "
+labels:
+  - "Status: Open"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请按模板填写任务信息。建议同时设置 Labels：
+        - 类型：Quest: Learning / Quest: Coding / Quest: Promotion
+        - 分值：Points: 10 / Points: 50 / Points: 100
+        - 状态：Status: Open（默认已加）
+
+  - type: dropdown
+    id: quest_type
+    attributes:
+      label: 任务类型（Type）
+      options:
+        - Quest: Learning
+        - Quest: Coding
+        - Quest: Promotion
+    validations:
+      required: true
+
+  - type: dropdown
+    id: points
+    attributes:
+      label: 分值（Points）
+      options:
+        - "Points: 10"
+        - "Points: 50"
+        - "Points: 100"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 任务描述（What / Why）
+      description: 说明任务目标、背景、验收标准
+      placeholder: |
+        目标：
+        验收标准：
+        参考链接：
+    validations:
+      required: true
+
+  - type: textarea
+    id: submission
+    attributes:
+      label: 提交方式（Submission）
+      description: 说明开发者如何提交成果（PR、评论链接、截图等）
+      placeholder: |
+        - 代码类：提交 PR 到 /demos，并在 PR 描述里写 Fixes #<issue-id>
+        - 非代码类：在本 Issue 评论中贴链接/截图
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: maintainer_check
+    attributes:
+      label: 维护者核销清单（Maintainers）
+      options:
+        - label: 关闭前已加上正确的 Points 标签
+        - label: 已指派完成者（Assignee）
+        - label: 验收标准已满足
+
