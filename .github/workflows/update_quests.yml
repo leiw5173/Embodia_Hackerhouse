@@ -1,20 +1,23 @@
-name: Award points (ChatOps)
+name: Update quests in README
 
 on:
-  issue_comment:
-    types: [created]
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  schedule:
+    # 每小时更新一次任务列表
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
-  issues: write
+  issues: read
 
 concurrency:
-  group: award-points-${{ github.repository }}
+  group: update-quests-${{ github.repository }}
   cancel-in-progress: false
 
 jobs:
-  award:
-    if: contains(github.event.comment.body, '/award')
+  update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,19 +33,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
 
-      - name: Award points (update JSON DB)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LEADERBOARD_DB: data/leaderboard.json
-        run: |
-          python scripts/award_points.py
-
-      - name: Refresh README leaderboard
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python scripts/generate_leaderboard.py --from-json data/leaderboard.json --readme README.md
-
       - name: Update quests in README
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,7 +47,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/leaderboard.json README.md
-          git commit -m "chore: update leaderboard"
+          git add README.md
+          git commit -m "chore: update quests list"
           git push
-

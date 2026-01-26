@@ -44,6 +44,12 @@ jobs:
         run: |
           python scripts/generate_leaderboard.py --from-json data/leaderboard.json --readme README.md
 
+      - name: Update quests in README
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/generate_quests.py --repo ${{ github.repository }} --readme README.md
+
       - name: Commit changes
         run: |
           if git diff --quiet; then
