@@ -7,9 +7,20 @@
 <!-- QUESTS:START -->
 ## 📋 任务展示界面（自动更新）
 
-> 当前没有开放的任务，请稍后再来查看！
+### 📚 学习
 
-> 最近更新：2026-01-26 08:23 UTC（由 GitHub Actions 自动生成）
+| 任务 | 分值 | 链接 |
+| :--- | ---: | :--- |
+| test | 50 XP | [#3](https://github.com/leiw5173/Embodia_Hackerhouse/issues/3) |
+
+### 💻 编程
+
+| 任务 | 分值 | 链接 |
+| :--- | ---: | :--- |
+| test | 50 XP | [#1](https://github.com/leiw5173/Embodia_Hackerhouse/issues/1) |
+| test | 50 XP | [#2](https://github.com/leiw5173/Embodia_Hackerhouse/issues/2) |
+
+> 最近更新：2026-01-26 08:29 UTC（由 GitHub Actions 自动生成）
 <!-- QUESTS:END -->
 
 ---
