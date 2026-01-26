@@ -56,7 +56,7 @@ def parse_quest_type_from_labels(labels: List[dict]) -> Optional[str]:
     return None
 
 
-def fetch_open_quests(session: requests.Session, repo: str) -> List[Quest]:
+def fetch_open_quests(session: requests.Session, repo: str, debug: bool = False) -> List[Quest]:
     """获取所有开放的 Quest Issue"""
     issues: List[dict] = []
     page = 1
@@ -75,17 +75,55 @@ def fetch_open_quests(session: requests.Session, repo: str) -> List[Quest]:
         if page > 50:
             break
 
+    if debug:
+        print(f"Fetched {len(issues)} open issues", file=sys.stderr)
+
     quests: List[Quest] = []
+    skipped_no_quest_type = 0
+    skipped_wrong_status = 0
+    skipped_pr = 0
+    
     for issue in issues:
         # 跳过 PR
         if "pull_request" in issue:
+            skipped_pr += 1
             continue
         
         # 检查是否有 Quest 类型标签
         labels = issue.get("labels", [])
+        label_names = [lb.get("name", "") for lb in labels]
+        issue_title = str(issue.get("title") or "").strip()
+        
+        if debug:
+            issue_num = issue.get("number", 0)
+            print(f"Issue #{issue_num}: {issue_title}", file=sys.stderr)
+            print(f"  Labels: {', '.join(label_names)}", file=sys.stderr)
+        
         quest_type = parse_quest_type_from_labels(labels)
+        
+        # 如果没有 Quest 类型标签，但标题包含 [Quest] 或使用了 Quest 模板，尝试识别
         if not quest_type:
-            continue
+            # 检查标题是否以 [Quest] 开头（表示使用了 Quest 模板）
+            if issue_title.startswith("[Quest]") or issue_title.startswith("[任务]"):
+                # 尝试从标题中提取类型，或使用默认类型
+                title_lower = issue_title.lower()
+                if "learning" in title_lower or "学习" in title_lower:
+                    quest_type = "Learning"
+                elif "coding" in title_lower or "编程" in title_lower or "代码" in title_lower:
+                    quest_type = "Coding"
+                elif "promotion" in title_lower or "推广" in title_lower:
+                    quest_type = "Promotion"
+                else:
+                    # 默认使用 Coding 类型
+                    quest_type = "Coding"
+                
+                if debug:
+                    print(f"  -> Detected Quest type from title: {quest_type}", file=sys.stderr)
+            else:
+                skipped_no_quest_type += 1
+                if debug:
+                    print(f"  -> Skipped: No Quest type label and title doesn't match Quest pattern", file=sys.stderr)
+                continue
         
         # 检查状态标签（可选，如果没有 Status: Open 标签也包含）
         has_open_status = any(
@@ -98,12 +136,18 @@ def fetch_open_quests(session: requests.Session, repo: str) -> List[Quest]:
             for lb in labels
         ):
             # 有其他状态标签但不是 Open，跳过
+            skipped_wrong_status += 1
+            if debug:
+                print(f"  -> Skipped: Wrong status label", file=sys.stderr)
             continue
         
         # 获取分值
         points = parse_points_from_labels(labels)
         if points is None:
             points = 0
+        
+        if debug:
+            print(f"  -> Included: {quest_type}, {points} XP", file=sys.stderr)
         
         quests.append(
             Quest(
@@ -115,6 +159,9 @@ def fetch_open_quests(session: requests.Session, repo: str) -> List[Quest]:
                 state=str(issue.get("state", "open")),
             )
         )
+    
+    if debug:
+        print(f"Skipped: {skipped_pr} PRs, {skipped_no_quest_type} issues without Quest type, {skipped_wrong_status} issues with wrong status", file=sys.stderr)
     
     return quests
 
@@ -196,6 +243,7 @@ def main() -> int:
     ap.add_argument("--repo", required=True, help="OWNER/REPO（例如：owner/repo）")
     ap.add_argument("--token", required=False, default=os.getenv("GITHUB_TOKEN"), help="GitHub token（或 env GITHUB_TOKEN）")
     ap.add_argument("--readme", default="README.md", help="Path to README to update")
+    ap.add_argument("--debug", action="store_true", help="显示调试信息")
     args = ap.parse_args()
 
     if not args.token:
@@ -212,7 +260,13 @@ def main() -> int:
         }
     )
 
-    quests = fetch_open_quests(session, args.repo)
+    quests = fetch_open_quests(session, args.repo, debug=args.debug)
+    
+    if args.debug:
+        print(f"Found {len(quests)} quests", file=sys.stderr)
+        for q in quests:
+            print(f"  - #{q.number}: {q.title} ({q.quest_type}, {q.points} XP)", file=sys.stderr)
+    
     rendered = render_quests_table(quests)
 
     with open(args.readme, "r", encoding="utf-8") as f:

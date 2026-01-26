@@ -37,7 +37,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python scripts/generate_quests.py --repo ${{ github.repository }} --readme README.md
+          python scripts/generate_quests.py --repo ${{ github.repository }} --readme README.md --debug
 
       - name: Commit changes
         run: |
